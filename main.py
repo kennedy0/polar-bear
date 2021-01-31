@@ -12,7 +12,6 @@ def main(args):
     app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
     title = "PolarBear"
-    icon = os.path.join(os.path.dirname(__file__), "resources", "icon.png")
 
     window = ScreenRecorder(title=title)
     window.show()
@@ -23,5 +22,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = "0"
     sys.exit(main(sys.argv))
