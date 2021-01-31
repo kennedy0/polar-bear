@@ -32,7 +32,7 @@ pyinstaller^
 echo Cleaning up...
 rmdir %PROJECT_DIR%\build /s /q
 rmdir %PROJECT_DIR%\build-venv /s /q
-del
+del %PROJECT_DIR%\PolarBear.spec /q
 cd %OLD_CWD%
 
 echo Build complete.
