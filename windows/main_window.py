@@ -144,7 +144,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         # Strip the extension from the file name; it'll be added in the ffmpeg command.
         if file_name.endswith(extension):
-            file_name = file_name.strip(extension)
+            file_name = os.path.splitext(file_name)[0]
         self.last_directory = os.path.dirname(file_name)
 
         # Build FFmpeg command. Exit if it's invalid.
@@ -156,7 +156,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
-            shell=True
+            # shell=True
         )
         self.set_recording_state(True)
 
