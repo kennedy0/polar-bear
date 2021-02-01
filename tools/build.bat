@@ -5,6 +5,9 @@ set TOOLS_DIR=%~dp0
 set PROJECT_DIR=%TOOLS_DIR%\..
 set RESOURCES_DIR=%PROJECT_DIR%\resources
 set ICON_FILE=%RESOURCES_DIR%\icon.ico
+set DIST_FOLDER=%PROJECT_DIR%\dist
+set PB_BUILD=%DIST_FOLDER%\PolarBear
+set ARCHIVE_SCRIPT=%TOOLS_DIR%\archive_build.py
 
 cd %PROJECT_DIR%
 
@@ -27,6 +30,10 @@ pyinstaller^
  --add-data="config\presets\*;.\config\presets"^
  --add-data="resources\*;.\resources"^
  main.py
+
+:: Archive build
+echo Archiving build...
+python %ARCHIVE_SCRIPT% %PB_BUILD%
 
 :: Cleanup
 echo Cleaning up...
