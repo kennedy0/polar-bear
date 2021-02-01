@@ -9,6 +9,8 @@ set DIST_FOLDER=%PROJECT_DIR%\dist
 set PB_BUILD=%DIST_FOLDER%\PolarBear
 set ARCHIVE_SCRIPT=%TOOLS_DIR%\archive_build.py
 
+:: Setup
+rmdir %DIST_FOLDER% /s /q
 cd %PROJECT_DIR%
 
 :: Create venv
