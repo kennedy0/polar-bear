@@ -15,6 +15,8 @@ CONFIG_FILE = os.path.join(CONFIG_PATH, f"{APP_NAME.replace(' ', '_')}.config")
 PRESETS_PATH = os.path.join(CONFIG_PATH, "presets")
 PRESETS_SRC = os.path.join(os.path.dirname(__file__), "presets")
 
+LOG_PATH = os.path.join(CONFIG_PATH, "logs")
+
 
 default_settings = {
     'preset': None,

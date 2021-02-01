@@ -1,5 +1,8 @@
+import datetime
 import os
 import subprocess
+import threading
+from typing import TextIO
 
 from pyffmpeg import FFmpeg
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -126,39 +129,27 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         try:
             self.validate_ffmpeg_command()
         except Exception as e:
-            print(e)
+            QtWidgets.QMessageBox.warning(self, "Error Loading Preset", str(e))
             return
 
-        # Get file path
-        extension = self.get_output_extension()
-        file_name, _filter = QtWidgets.QFileDialog.getSaveFileName(
-            parent=self,
-            caption="Save Video As",
-            directory=self.last_directory,
-            filter=f"(*{extension})"
-        )
-
-        # If dialog was cancelled, exit.
-        if file_name == "":
+        file_name = self.get_video_file_path()
+        if file_name is None:
             return
-
-        # Strip the extension from the file name; it'll be added in the ffmpeg command.
-        if file_name.endswith(extension):
-            file_name = os.path.splitext(file_name)[0]
         self.last_directory = os.path.dirname(file_name)
 
-        # Build FFmpeg command. Exit if it's invalid.
-        cmd = self.build_ffmpeg_cmd(file=file_name)
-
         # Start ffmpeg subprocess
+        ffmpeg_cmd = self.build_ffmpeg_cmd(file=file_name)
+        log_file = self.create_log_file(video_file_path=file_name)
         self.ffmpeg_process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            ffmpeg_cmd,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
             stdin=subprocess.PIPE,
-            # shell=True
         )
+
         self.set_recording_state(True)
+        thread = threading.Thread(target=self.poll_subprocess, args=(log_file,))
+        thread.start()
 
     def on_stop_clicked(self):
         if isinstance(self.ffmpeg_process, subprocess.Popen):
@@ -290,12 +281,41 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             if cmd.find(keyword) < 0:
                 raise RuntimeError(f"Invalid FFmpeg command; keyword not found: {keyword}")
 
+    def get_video_file_path(self) -> str or None:
+        extension = self.get_output_extension()
+        file_name, _filter = QtWidgets.QFileDialog.getSaveFileName(
+            parent=self,
+            caption="Save Video As",
+            directory=self.last_directory,
+            filter=f"(*{extension})"
+        )
+
+        # If dialog was cancelled, return None.
+        if file_name == "":
+            return None
+
+        # Strip the extension from the file name; it'll be added in the ffmpeg command.
+        if file_name.endswith(extension):
+            file_name = os.path.splitext(file_name)[0]
+        return file_name
+
     def get_output_extension(self) -> str:
         """ Parse the ffmpeg command and get its file extension. """
         cmd = self.read_preset_file()
         file_name = cmd.split(" ")[-1].strip("\"")
         extension = os.path.splitext(file_name)[-1]
         return extension
+
+    @staticmethod
+    def create_log_file(video_file_path: str) -> TextIO:
+        try:
+            os.makedirs(settings.LOG_PATH)
+        except OSError:
+            pass
+        video_file_name = os.path.basename(video_file_path)
+        log_file_name = datetime.datetime.now().strftime(f"%Y%m%d_%H%M%S_{video_file_name}.log")
+        log_file_path = os.path.join(settings.LOG_PATH, log_file_name)
+        return open(log_file_path, 'w')
 
     def resizeEvent(self, a0: QtGui.QResizeEvent):
         super().resizeEvent(a0)
@@ -337,3 +357,9 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             self.btn_stop.setEnabled(False)
             for widget in [self.spin_width, self.spin_height, self.fps, self.btn_close, self.btn_options]:
                 widget.setEnabled(True)
+
+    def poll_subprocess(self, log_file: TextIO):
+        """ Wait for ffmpeg subprocess to end; close log file. """
+        while self.ffmpeg_process.poll() is None:
+            pass
+        log_file.close()
