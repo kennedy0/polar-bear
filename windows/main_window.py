@@ -161,7 +161,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         self.set_recording_state(True)
 
     def on_stop_clicked(self):
-        if isinstance(self.ffmpeg_process, subprocess.Popen) is not None:
+        if isinstance(self.ffmpeg_process, subprocess.Popen):
             # Send a quit signal to ffmpeg.
             self.ffmpeg_process.communicate(b"q")
             self.ffmpeg_process = None
