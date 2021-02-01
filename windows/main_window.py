@@ -143,8 +143,9 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         log_file = self.create_log_file(video_file_path=file_name)
         self.ffmpeg_process = subprocess.Popen(
             ffmpeg_cmd,
+            creationflags=subprocess.CREATE_NO_WINDOW,
             stdout=log_file,
-            stderr=subprocess.STDOUT,
+            stderr=log_file,
             stdin=subprocess.PIPE,
         )
 
