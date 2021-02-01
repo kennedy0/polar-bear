@@ -41,6 +41,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.lbl_title.setText(title)
         self.btn_about.setIcon(QtGui.QIcon(ICON_FILE))
+        self.setWindowIcon(QtGui.QIcon(ICON_FILE))
 
         self.set_recording_state(recording=False)
         self.group_title.setFocus()
