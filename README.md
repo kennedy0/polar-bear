@@ -1,5 +1,7 @@
 ![PolarBear](resources/readme/pb_header.png)
 
+### [Click to download the latest version](https://github.com/kennedy0/PolarBear/releases/latest)
+
 PolarBear is a simple application that makes it easy to record a region of your desktop.
 
 Position the empty region of the window over the content you want to capture and click **Record**.
