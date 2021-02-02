@@ -101,7 +101,8 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
     def on_about_clicked(self):
         msg = [
             f"Version {__version__}",
-            "<a href=\"https://github.com/kennedy0/PolarBear/releases\">Download the latest version from GitHub</a>"
+            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\">"
+            "Download the latest version from GitHub</a>"
         ]
         about = QtWidgets.QMessageBox(self)
         about.setTextFormat(QtCore.Qt.RichText)
