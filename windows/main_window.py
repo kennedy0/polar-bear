@@ -141,13 +141,15 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         self.last_directory = os.path.dirname(file_name)
 
         # Start ffmpeg subprocess
-        ffmpeg_cmd = self.build_ffmpeg_cmd(file=file_name)
+        ffmpeg_str = self.build_ffmpeg_cmd(file=file_name)
         log_file = self.create_log_file(video_file_path=file_name)
 
         if os.name == "nt":
             creation_flags = subprocess.CREATE_NO_WINDOW
+            ffmpeg_cmd = shlex.split(ffmpeg_str, posix=False)
         else:
             creation_flags = 0
+            ffmpeg_cmd = shlex.split(ffmpeg_str)
 
         self.ffmpeg_process = subprocess.Popen(
             ffmpeg_cmd,
@@ -269,7 +271,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         cmd_str = cmd_str.replace("<SIZE>", f"{w}x{h}")
         cmd_str = cmd_str.replace("<OUTPUT>", file)
 
-        return shlex.split(cmd_str)
+        return cmd_str
 
     def read_preset_file(self):
         preset_file = settings.file_from_preset_name(preset=self.config['preset'])
