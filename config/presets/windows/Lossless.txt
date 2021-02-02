@@ -11,4 +11,4 @@
 -tune zerolatency
 -vsync 1
 -y
-"<OUTPUT>.mp4"
+<OUTPUT>.mp4
