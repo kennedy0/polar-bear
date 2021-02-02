@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import platform
 import shutil
 from typing import List
 
@@ -12,8 +13,18 @@ CONFIG_PATH = os.path.join(
     APP_NAME.replace(' ', '_'))
 CONFIG_FILE = os.path.join(CONFIG_PATH, f"{APP_NAME.replace(' ', '_')}.config")
 
+
+def get_presets_src():
+    if platform.system() == "Windows":
+        return os.path.join(os.path.dirname(__file__), "presets", "windows")
+    elif platform.system() == "Linux":
+        return os.path.join(os.path.dirname(__file__), "presets", "linux")
+    else:
+        raise NotImplementedError(f"Platform not supported: {platform.system()}")
+
+
 PRESETS_PATH = os.path.join(CONFIG_PATH, "presets")
-PRESETS_SRC = os.path.join(os.path.dirname(__file__), "presets")
+PRESETS_SRC = get_presets_src()
 
 LOG_PATH = os.path.join(CONFIG_PATH, "logs")
 
