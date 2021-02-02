@@ -8,8 +8,8 @@ from config import settings
 
 
 class OptionsWindow(Ui_Options, QtWidgets.QDialog):
-    def __init__(self, config: dict):
-        super().__init__()
+    def __init__(self, parent, config: dict):
+        super().__init__(parent=parent)
         self.setupUi(self)
         self.config = copy.deepcopy(config)
 

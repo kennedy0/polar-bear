@@ -11,6 +11,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from gui.main_window import Ui_MainWindow
 
 from config import settings
+from config.theme import get_stylesheet, Theme
 from config.resources import ICON_FILE
 from .options_window import OptionsWindow
 from __version__ import __version__
@@ -92,6 +93,11 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.apply_settings()
 
+    def set_theme(self, theme: Theme):
+        stylesheet_file = get_stylesheet(theme)
+        with open(stylesheet_file, 'r') as ss:
+            self.setStyleSheet(ss.read())
+
     def apply_settings(self):
         self.last_directory = self.config['default_save_path']
         self.set_fps(self.config['default_fps'])
@@ -119,7 +125,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
     def on_options_clicked(self):
         self.hide()
-        options = OptionsWindow(config=self.config)
+        options = OptionsWindow(parent=self, config=self.config)
         result = options.exec_()
         self.show()
 
