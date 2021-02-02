@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\a\git\screen_capture\ui\screen_recorder.ui'
+# Form implementation generated from reading ui file 'C:\Users\a\git\PolarBear\ui\main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -303,7 +303,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Screen Recorder"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "PolarBear"))
         self.lbl_title.setText(_translate("MainWindow", "PolarBear"))
         self.btn_options.setToolTip(_translate("MainWindow", "Options"))
         self.btn_options.setText(_translate("MainWindow", "⚙"))
