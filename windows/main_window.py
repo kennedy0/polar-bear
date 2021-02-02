@@ -7,7 +7,7 @@ from typing import TextIO
 from pyffmpeg import FFmpeg
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-from gui.screen_recorder import Ui_MainWindow
+from gui.main_window import Ui_MainWindow
 
 from config import settings
 from config.resources import ICON_FILE
