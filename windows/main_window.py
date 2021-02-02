@@ -1,5 +1,6 @@
 import datetime
 import os
+import shlex
 import subprocess
 import threading
 from typing import TextIO
@@ -149,7 +150,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.ffmpeg_process = subprocess.Popen(
             ffmpeg_cmd,
-            creationflags=subprocess.CREATE_NO_WINDOW,
+            creationflags=creation_flags,
             stdout=log_file,
             stderr=log_file,
             stdin=subprocess.PIPE,
@@ -267,7 +268,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         cmd_str = cmd_str.replace("<SIZE>", f"{w}x{h}")
         cmd_str = cmd_str.replace("<OUTPUT>", file)
 
-        return cmd_str
+        return shlex.split(cmd_str)
 
     def read_preset_file(self):
         preset_file = settings.file_from_preset_name(preset=self.config['preset'])
