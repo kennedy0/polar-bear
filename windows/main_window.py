@@ -157,8 +157,6 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         if isinstance(self.ffmpeg_process, subprocess.Popen):
             # Send a quit signal to ffmpeg.
             self.ffmpeg_process.communicate(b"q")
-            self.ffmpeg_process = None
-        self.set_recording_state(False)
 
     def on_edit_width(self):
         self.set_window_width(self.spin_width.value())
@@ -361,7 +359,9 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
                 widget.setEnabled(True)
 
     def poll_subprocess(self, log_file: TextIO):
-        """ Wait for ffmpeg subprocess to end; close log file. """
+        """ Wait for ffmpeg subprocess to end; close log file and set the recording state. """
         while self.ffmpeg_process.poll() is None:
             pass
         log_file.close()
+        self.ffmpeg_process = None
+        self.set_recording_state(False)
