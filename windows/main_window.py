@@ -289,7 +289,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             parent=self,
             caption="Save Video As",
             directory=self.last_directory,
-            filter=f"(*{extension})"
+            filter=f"{extension.strip('.')} (*{extension})"
         )
 
         # If dialog was cancelled, return None.
