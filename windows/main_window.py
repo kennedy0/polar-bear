@@ -11,7 +11,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from gui.main_window import Ui_MainWindow
 
 from config import settings
-from config.theme import get_stylesheet, Theme
+from config.theme import get_stylesheet
 from config.resources import ICON_FILE
 from .options_window import OptionsWindow
 from __version__ import __version__
@@ -93,7 +93,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         self.apply_settings()
 
-    def set_theme(self, theme: Theme):
+    def set_theme(self, theme: str):
         stylesheet_file = get_stylesheet(theme)
         with open(stylesheet_file, 'r') as ss:
             self.setStyleSheet(ss.read())
@@ -103,11 +103,12 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         self.set_fps(self.config['default_fps'])
         self.set_window_width(self.config['default_width'])
         self.set_window_height(self.config['default_height'])
+        self.set_theme(theme=self.config['theme'])
 
     def on_about_clicked(self):
         msg = [
             f"Version {__version__}",
-            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\">"
+            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\" style=\"color: asdfasdf;\">"
             "Download the latest version from GitHub</a>"
         ]
         about = QtWidgets.QMessageBox(self)
@@ -359,20 +360,28 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
     def set_recording_state(self, recording: bool):
         """ Enable / Disable UI elements for recording. """
         self.is_recording = recording
+        all_interactable_widgets = [
+            self.spin_width,
+            self.spin_height,
+            self.fps,
+            self.btn_close,
+            self.btn_options,
+            self.btn_about,
+            self.btn_record,
+            self.btn_stop
+        ]
         if self.is_recording:
-            self.lbl_status.setText("[<span style=\"color:red\">●</span> Recording]")
+            self.lbl_status.setText("<span style=\"color:red\">●</span> Recording")
             self.lbl_title.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-            self.btn_record.setEnabled(False)
-            self.btn_stop.setEnabled(True)
-            for widget in [self.spin_width, self.spin_height, self.fps, self.btn_close, self.btn_options]:
+            for widget in all_interactable_widgets:
                 widget.setEnabled(False)
+            self.btn_stop.setEnabled(True)
         else:
-            self.lbl_status.setText("[<span style=\"color:black\">■</span> Stopped]")
+            self.lbl_status.setText("■ Stopped")
             self.lbl_title.setCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
-            self.btn_record.setEnabled(True)
-            self.btn_stop.setEnabled(False)
-            for widget in [self.spin_width, self.spin_height, self.fps, self.btn_close, self.btn_options]:
+            for widget in all_interactable_widgets:
                 widget.setEnabled(True)
+            self.btn_stop.setEnabled(False)
 
     def poll_subprocess(self, log_file: TextIO):
         """ Wait for ffmpeg subprocess to end; close log file and set the recording state. """

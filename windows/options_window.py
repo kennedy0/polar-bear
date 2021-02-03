@@ -1,10 +1,11 @@
 import copy
 import os
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 from gui.options import Ui_Options
 from config import settings
+from config.theme import THEME_SYSTEM, THEME_LIGHT, THEME_DARK, get_stylesheet
 
 
 class OptionsWindow(Ui_Options, QtWidgets.QDialog):
@@ -12,6 +13,8 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         super().__init__(parent=parent)
         self.setupUi(self)
         self.config = copy.deepcopy(config)
+
+        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
 
         self._init_callbacks()
         self.update_widgets()
@@ -29,6 +32,10 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         self.spin_fps.valueChanged.connect(self.on_change_fps)
         self.spin_width.valueChanged.connect(self.on_change_width)
         self.spin_height.valueChanged.connect(self.on_change_height)
+
+        self.btn_theme_system_default.clicked.connect(self.on_set_theme_system)
+        self.btn_theme_light.clicked.connect(self.on_set_theme_light)
+        self.btn_theme_dark.clicked.connect(self.on_set_theme_dark)
 
     @staticmethod
     def on_open_presets_clicked():
@@ -94,6 +101,23 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
     def on_change_height(self):
         self.config['default_height'] = self.spin_height.value()
 
+    def on_set_theme_system(self):
+        self.config['theme'] = THEME_SYSTEM
+        self.refresh_theme()
+
+    def on_set_theme_light(self):
+        self.config['theme'] = THEME_LIGHT
+        self.refresh_theme()
+
+    def on_set_theme_dark(self):
+        self.config['theme'] = THEME_DARK
+        self.refresh_theme()
+
+    def refresh_theme(self):
+        stylesheet_file = get_stylesheet(self.config['theme'])
+        with open(stylesheet_file, 'r') as ss:
+            self.setStyleSheet(ss.read())
+
     def update_widgets(self):
         """ Set up UI from config. """
         # Preset combo box
@@ -104,6 +128,15 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         self.spin_fps.setValue(self.config['default_fps'])
         self.spin_width.setValue(self.config['default_width'])
         self.spin_height.setValue(self.config['default_height'])
+
+        # Theme
+        theme_button_map = {
+            THEME_SYSTEM: self.btn_theme_system_default,
+            THEME_LIGHT: self.btn_theme_light,
+            THEME_DARK: self.btn_theme_dark,
+        }
+        theme_button: QtWidgets.QPushButton = theme_button_map.get(self.config['theme'])
+        theme_button.setChecked(True)
 
     def update_preset_widget(self):
         self.combo_preset.blockSignals(True)

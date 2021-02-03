@@ -2,7 +2,6 @@ import sys
 
 from PyQt5 import QtWidgets, QtCore
 
-from config.theme import get_theme
 from windows.main_window import ScreenRecorder
 
 
@@ -17,7 +16,6 @@ def main(args):
     window.show()
     window.set_window_width(window.config['default_width'])
     window.set_window_height(window.config['default_height'])
-    window.set_theme(get_theme())
 
     return app.exec_()
 

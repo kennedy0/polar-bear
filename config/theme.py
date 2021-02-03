@@ -1,9 +1,5 @@
 import os
 import platform
-from enum import Enum
-
-
-from PyQt5.QtWidgets import QApplication
 
 
 THEMES_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "themes")
@@ -11,22 +7,21 @@ LIGHT_STYLE_SHEET = os.path.join(THEMES_PATH, "light.qss")
 DARK_STYLE_SHEET = os.path.join(THEMES_PATH, "dark.qss")
 
 
-class Theme(Enum):
-    LIGHT = "light"
-    DARK = "dark"
-    DEFAULT = LIGHT
+THEME_LIGHT = "light"
+THEME_DARK = "dark"
+THEME_SYSTEM = "system"
 
 
-def get_theme() -> Theme:
+def get_theme() -> str:
     if platform.system() == "Windows":
         return get_theme_windows()
     elif platform.system() == "Linux":
         return get_theme_linux()
     else:
-        return Theme.DEFAULT
+        return THEME_LIGHT
 
 
-def get_theme_windows() -> Theme:
+def get_theme_windows() -> str:
     import winreg
 
     # noinspection PyBroadException
@@ -35,21 +30,26 @@ def get_theme_windows() -> Theme:
         with winreg.OpenKey(key=winreg.HKEY_CURRENT_USER, sub_key=sub_key) as registry_key:
             value, type_id = winreg.QueryValueEx(registry_key, "AppsUseLightTheme")
         if value == 0:
-            return Theme.DARK
+            return THEME_DARK
         else:
-            return Theme.LIGHT
+            return THEME_LIGHT
     except Exception:
-        return Theme.DEFAULT
+        return THEME_LIGHT
 
 
-def get_theme_linux() -> Theme:
-    return Theme.DEFAULT
+def get_theme_linux() -> str:
+    return THEME_LIGHT
 
 
-def get_stylesheet(theme: Theme) -> str:
-    if theme == Theme.LIGHT:
+def get_stylesheet(theme: str) -> str:
+    if theme == THEME_SYSTEM:
+        # Get theme dynamically from system settings
+        theme = get_theme()
+
+    if theme == THEME_LIGHT:
         return LIGHT_STYLE_SHEET
-    elif theme == Theme.DARK:
+    elif theme == THEME_DARK:
         return DARK_STYLE_SHEET
     else:
-        return get_stylesheet(Theme.DEFAULT)
+        # Default to light
+        return LIGHT_STYLE_SHEET

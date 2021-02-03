@@ -5,6 +5,8 @@ import platform
 import shutil
 from typing import List
 
+from .theme import THEME_SYSTEM
+
 
 APP_NAME = "PolarBear"
 CONFIG_PATH = os.path.join(
@@ -35,6 +37,7 @@ default_settings = {
     'default_fps': 60,
     'default_width': 800,
     'default_height': 600,
+    'theme': THEME_SYSTEM,
 }
 
 
