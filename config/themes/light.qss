@@ -1,0 +1,19 @@
+QWidget {
+  color: #1e363d;
+  background-color: #e5e5e5;
+  font-family: "Consolas";
+  selection-background-color: #71abba;
+}
+
+QWidget::disabled {
+  color: #2e525d;
+  background-color: #bdbdbd;
+}
+
+QGroupBox {
+  border: 1px solid #71abba;
+}
+
+QPushButton:checked {
+  background-color: #71abba;
+}
