@@ -15,5 +15,20 @@ QGroupBox {
 }
 
 QPushButton:checked {
-  background-color: #61ceed;
+  background-color: #5a5a5a;
+}
+
+QAbstractSpinBox  {
+  border: 1px solid #6b7b80;
+  background-color: #5a5a5a;
+}
+
+QLineEdit {
+  border: 1px solid #6b7b80;
+  background-color: #5a5a5a;
+}
+
+QComboBox  {
+  border: 1px solid #6b7b80;
+  background-color: #5a5a5a;
 }
