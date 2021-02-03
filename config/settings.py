@@ -52,7 +52,7 @@ def load_config() -> dict:
     # If the config is missing any default values, add them.
     for key, value in default_settings.items():
         if key not in config.keys():
-            config.update({key, value})
+            config.update({key: value})
 
     return config
 
