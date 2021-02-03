@@ -1,14 +1,13 @@
 <FFMPEG>
--f gdigrab
+-f x11grab
 -framerate <FPS>
--offset_x <X> -offset_y <Y>
 -video_size <SIZE>
--i desktop
+-i :1+<X>,<Y>
 -c:v libx264
--pix_fmt yuv422p
+-pix_fmt yuv422p10
 -crf 23
 -preset ultrafast
 -tune zerolatency
 -vsync 1
 -y
-"<OUTPUT>.mp4"
+<OUTPUT>.mp4

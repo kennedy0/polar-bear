@@ -1,0 +1,13 @@
+<FFMPEG>
+-f x11grab
+-framerate <FPS>
+-video_size <SIZE>
+-i :1+<X>,<Y>
+-c:v libx264
+-pix_fmt yuv422p
+-crf 23
+-preset ultrafast
+-tune zerolatency
+-vsync 1
+-y
+<OUTPUT>.mp4

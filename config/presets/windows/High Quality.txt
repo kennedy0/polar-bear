@@ -6,9 +6,9 @@
 -i desktop
 -c:v libx264
 -pix_fmt yuv422p
--crf 0
+-crf 17
 -preset ultrafast
 -tune zerolatency
 -vsync 1
 -y
-"<OUTPUT>.mp4"
+<OUTPUT>.mp4

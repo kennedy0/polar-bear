@@ -31,7 +31,7 @@
    <enum>Qt::PreventContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Screen Recorder</string>
+   <string>PolarBear</string>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>false</bool>

@@ -1,5 +1,6 @@
 import datetime
 import os
+import shlex
 import subprocess
 import threading
 from typing import TextIO
@@ -7,7 +8,7 @@ from typing import TextIO
 from pyffmpeg import FFmpeg
 from PyQt5 import QtWidgets, QtGui, QtCore
 
-from gui.screen_recorder import Ui_MainWindow
+from gui.main_window import Ui_MainWindow
 
 from config import settings
 from config.resources import ICON_FILE
@@ -100,7 +101,8 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
     def on_about_clicked(self):
         msg = [
             f"Version {__version__}",
-            "<a href=\"https://github.com/kennedy0/PolarBear/releases\">Download the latest version from GitHub</a>"
+            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\">"
+            "Download the latest version from GitHub</a>"
         ]
         about = QtWidgets.QMessageBox(self)
         about.setTextFormat(QtCore.Qt.RichText)
@@ -139,11 +141,19 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         self.last_directory = os.path.dirname(file_name)
 
         # Start ffmpeg subprocess
-        ffmpeg_cmd = self.build_ffmpeg_cmd(file=file_name)
+        ffmpeg_str = self.build_ffmpeg_cmd(file=file_name)
         log_file = self.create_log_file(video_file_path=file_name)
+
+        if os.name == "nt":
+            creation_flags = subprocess.CREATE_NO_WINDOW
+            ffmpeg_cmd = shlex.split(ffmpeg_str, posix=False)
+        else:
+            creation_flags = 0
+            ffmpeg_cmd = shlex.split(ffmpeg_str)
+
         self.ffmpeg_process = subprocess.Popen(
             ffmpeg_cmd,
-            creationflags=subprocess.CREATE_NO_WINDOW,
+            creationflags=creation_flags,
             stdout=log_file,
             stderr=log_file,
             stdin=subprocess.PIPE,
@@ -157,8 +167,6 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         if isinstance(self.ffmpeg_process, subprocess.Popen):
             # Send a quit signal to ffmpeg.
             self.ffmpeg_process.communicate(b"q")
-            self.ffmpeg_process = None
-        self.set_recording_state(False)
 
     def on_edit_width(self):
         self.set_window_width(self.spin_width.value())
@@ -289,7 +297,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             parent=self,
             caption="Save Video As",
             directory=self.last_directory,
-            filter=f"(*{extension})"
+            filter=f"{extension.strip('.')} (*{extension})"
         )
 
         # If dialog was cancelled, return None.
@@ -361,7 +369,9 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
                 widget.setEnabled(True)
 
     def poll_subprocess(self, log_file: TextIO):
-        """ Wait for ffmpeg subprocess to end; close log file. """
+        """ Wait for ffmpeg subprocess to end; close log file and set the recording state. """
         while self.ffmpeg_process.poll() is None:
             pass
         log_file.close()
+        self.ffmpeg_process = None
+        self.set_recording_state(False)
