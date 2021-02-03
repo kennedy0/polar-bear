@@ -1,5 +1,4 @@
 @echo off
-set VENV_ACTIVATE=C:\Users\a\venv\screen_cap_2\Scripts\activate
 set OLD_CWD=%cd%
 set TOOLS_DIR=%~dp0
 set PROJECT_DIR=%TOOLS_DIR%\..
@@ -30,6 +29,7 @@ pyinstaller^
  --name PolarBear^
  --icon=%ICON_FILE%^
  --add-data="config\presets\*;.\config\presets"^
+ --add-data="config\themes\*;.\config\themes"^
  --add-data="resources\*;.\resources"^
  main.py
 
