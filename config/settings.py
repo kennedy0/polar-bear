@@ -5,6 +5,7 @@ import platform
 import shutil
 from typing import List
 
+from .ffmpeg_version import FFMPEG_SYSTEM
 from .theme import THEME_SYSTEM
 
 
@@ -38,6 +39,7 @@ default_settings = {
     'default_width': 800,
     'default_height': 600,
     'theme': THEME_SYSTEM,
+    'ffmpeg_version': FFMPEG_SYSTEM,
 }
 
 

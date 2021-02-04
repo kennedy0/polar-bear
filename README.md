@@ -13,8 +13,6 @@ Position the window over the content you want to capture and click **Record**.
 PolarBear ships with a few presets for lightweight mp4 recording.
 The default should be sufficient for most people.
 
-![PolarBear](resources/readme/pb_options_dark.png)
-
 If you want to customize your presets, click the **Open Presets Folder** button in the options screen.
 Presets are stored as text files.
 You can add, edit, or delete preset files.
@@ -39,25 +37,6 @@ brackets alone.
 -i desktop
 -c:v libx264
 -pix_fmt yuv422p
--crf 23
--preset ultrafast
--tune zerolatency
--vsync 1
--y
-<OUTPUT>.mp4
-```
-
-#### Example Linux preset using x11grab
-```
-# Example Linux preset using x11grab
-
-<FFMPEG>
--f x11grab
--framerate <FPS>
--video_size <SIZE>
--i :1+<X>,<Y>
--c:v libx264
--pix_fmt yuv422p10
 -crf 23
 -preset ultrafast
 -tune zerolatency

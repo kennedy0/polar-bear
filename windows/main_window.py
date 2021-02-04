@@ -5,19 +5,16 @@ import subprocess
 import threading
 from typing import TextIO
 
-from pyffmpeg import FFmpeg
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 from gui.main_window import Ui_MainWindow
 
 from config import settings
+from config.ffmpeg_version import get_ffmpeg_binary
 from config.theme import get_stylesheet
 from config.resources import ICON_FILE
 from .options_window import OptionsWindow
 from __version__ import __version__
-
-
-FFMPEG_BIN = FFmpeg().get_ffmpeg_bin()
 
 
 class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
@@ -62,6 +59,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             widget.setMinimumSize(border_size, border_size)
 
     def _init_callbacks(self):
+        self.btn_ffmpeg_command.clicked.connect(self.on_ffmpeg_command_clicked)
         self.btn_about.clicked.connect(self.on_about_clicked)
         self.btn_close.clicked.connect(self.on_close_clicked)
         self.btn_options.clicked.connect(self.on_options_clicked)
@@ -105,10 +103,21 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         self.set_window_height(self.config['default_height'])
         self.set_theme(theme=self.config['theme'])
 
+    def on_ffmpeg_command_clicked(self):
+        ffmpeg_cmd = self.build_ffmpeg_cmd(file="OUTPUT")
+        ffmpeg_cmd = ffmpeg_cmd.replace(" -", "<br />-")
+        ffmpeg_msg = QtWidgets.QMessageBox(self)
+        ffmpeg_msg.setText(ffmpeg_cmd)
+        ffmpeg_msg.setWindowTitle("FFmpeg Command")
+
+        self.hide()
+        ffmpeg_msg.exec()
+        self.show()
+
     def on_about_clicked(self):
         msg = [
             f"Version {__version__}",
-            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\" style=\"color: asdfasdf;\">"
+            "<a href=\"https://github.com/kennedy0/PolarBear/releases/latest\" style=\"color: darkgray;\">"
             "Download the latest version from GitHub</a>"
         ]
         about = QtWidgets.QMessageBox(self)
@@ -264,6 +273,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             self.resize(self.width(), self.height() + 1)
 
     def build_ffmpeg_cmd(self, file: str) -> str:
+        ffmpeg_binary = get_ffmpeg_binary(self.config['ffmpeg_version'])
         fps = str(self.fps.value())
         x = str(self.capture_region.mapToGlobal(QtCore.QPoint(0, 0)).x())
         y = str(self.capture_region.mapToGlobal(QtCore.QPoint(0, 0)).y())
@@ -271,7 +281,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         h = str(self.capture_region.height())
 
         cmd_str = self.read_preset_file()
-        cmd_str = cmd_str.replace("<FFMPEG>", FFMPEG_BIN)
+        cmd_str = cmd_str.replace("<FFMPEG>", ffmpeg_binary)
         cmd_str = cmd_str.replace("<FPS>", fps)
         cmd_str = cmd_str.replace("<X>", x)
         cmd_str = cmd_str.replace("<Y>", y)
