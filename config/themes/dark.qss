@@ -32,3 +32,7 @@ QComboBox  {
   border: 1px solid #6b7b80;
   background-color: #5a5a5a;
 }
+
+QMessageBox {
+    messagebox-text-interaction-flags: 5;
+}

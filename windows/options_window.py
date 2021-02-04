@@ -3,9 +3,10 @@ import os
 
 from PyQt5 import QtCore, QtWidgets
 
-from gui.options import Ui_Options
+from config import ffmpeg_version
 from config import settings
 from config.theme import THEME_SYSTEM, THEME_LIGHT, THEME_DARK, get_stylesheet
+from gui.options import Ui_Options
 
 
 class OptionsWindow(Ui_Options, QtWidgets.QDialog):
@@ -36,6 +37,10 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         self.btn_theme_system_default.clicked.connect(self.on_set_theme_system)
         self.btn_theme_light.clicked.connect(self.on_set_theme_light)
         self.btn_theme_dark.clicked.connect(self.on_set_theme_dark)
+
+        self.btn_ffmpeg_system.clicked.connect(self.on_use_system_ffmpeg)
+        self.btn_ffmpeg_bundled.clicked.connect(self.on_use_bundled_ffmpeg)
+        self.btn_ffmpeg_help.clicked.connect(self.on_ffmpeg_help_clicked)
 
     @staticmethod
     def on_open_presets_clicked():
@@ -113,6 +118,27 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         self.config['theme'] = THEME_DARK
         self.refresh_theme()
 
+    def on_use_system_ffmpeg(self):
+        self.config['ffmpeg_version'] = ffmpeg_version.FFMPEG_SYSTEM
+
+    def on_use_bundled_ffmpeg(self):
+        self.config['ffmpeg_version'] = ffmpeg_version.FFMPEG_BUNDLED
+
+    def on_ffmpeg_help_clicked(self):
+        msg = [
+            "Specify whether to use a version of FFmpeg already installed on the system, or the one that comes bundled "
+            "with PolarBear.",
+            "",
+            "Regardless of which option is chosen, the bundled version will always be used as a fallback.",
+            ""
+        ]
+        system_ffmpeg = ffmpeg_version.get_system_ffmpeg()
+        if system_ffmpeg is None:
+            msg += ["No FFmpeg was found on your system."]
+        else:
+            msg += ["FFmpeg installation found:", system_ffmpeg]
+        QtWidgets.QMessageBox.information(self, "FFmpeg Help", "\n".join(msg))
+
     def refresh_theme(self):
         stylesheet_file = get_stylesheet(self.config['theme'])
         with open(stylesheet_file, 'r') as ss:
@@ -137,6 +163,14 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
         }
         theme_button: QtWidgets.QPushButton = theme_button_map.get(self.config['theme'])
         theme_button.setChecked(True)
+
+        # FFmpeg Version
+        ffmpeg_button_map = {
+            ffmpeg_version.FFMPEG_SYSTEM: self.btn_ffmpeg_system,
+            ffmpeg_version.FFMPEG_BUNDLED: self.btn_ffmpeg_bundled,
+        }
+        ffmpeg_button: QtWidgets.QPushButton = ffmpeg_button_map.get(self.config['ffmpeg_version'])
+        ffmpeg_button.setChecked(True)
 
     def update_preset_widget(self):
         self.combo_preset.blockSignals(True)
