@@ -158,7 +158,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
 
         # Start ffmpeg subprocess
         ffmpeg_str = self.build_ffmpeg_cmd(file=file_name)
-        log_file = self.create_log_file(video_file_path=file_name)
+        log_file = self.create_log_file(video_file_path=file_name, command_string=ffmpeg_str)
 
         if os.name == "nt":
             creation_flags = subprocess.CREATE_NO_WINDOW
@@ -334,7 +334,7 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         return extension
 
     @staticmethod
-    def create_log_file(video_file_path: str) -> TextIO:
+    def create_log_file(video_file_path: str, command_string: str) -> TextIO:
         try:
             os.makedirs(settings.LOG_PATH)
         except OSError:
@@ -342,7 +342,9 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
         video_file_name = os.path.basename(video_file_path)
         log_file_name = datetime.datetime.now().strftime(f"%Y%m%d_%H%M%S_{video_file_name}.log")
         log_file_path = os.path.join(settings.LOG_PATH, log_file_name)
-        return open(log_file_path, 'w')
+        with open(log_file_path, 'w') as fp:
+            fp.write(f"{command_string}\n\n")
+        return open(log_file_path, 'a')
 
     def resizeEvent(self, a0: QtGui.QResizeEvent):
         super().resizeEvent(a0)
