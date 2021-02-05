@@ -13,5 +13,3 @@ def get_icon():
 
 
 ICON_FILE = get_icon()
-
-
