@@ -378,9 +378,10 @@ class ScreenRecorder(Ui_MainWindow, QtWidgets.QMainWindow):
             self.fps,
             self.btn_close,
             self.btn_options,
+            self.btn_ffmpeg_command,
             self.btn_about,
             self.btn_record,
-            self.btn_stop
+            self.btn_stop,
         ]
         if self.is_recording:
             self.lbl_status.setText("<span style=\"color:red\">●</span> Recording")
