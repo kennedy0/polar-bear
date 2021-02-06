@@ -1,5 +1,7 @@
 import copy
 import os
+import platform
+import subprocess
 
 from PyQt5 import QtCore, QtWidgets
 
@@ -44,7 +46,13 @@ class OptionsWindow(Ui_Options, QtWidgets.QDialog):
 
     @staticmethod
     def on_open_presets_clicked():
-        os.startfile(settings.PRESETS_PATH)
+        if platform.system() == "Windows":
+            os.startfile(settings.PRESETS_PATH)
+        elif platform.system() == "Linux":
+            proc = subprocess.Popen(["xdg-open", settings.PRESETS_PATH])
+            proc.communicate()
+        else:
+            raise NotImplementedError(f"OS not supported: {platform.system()}")
 
     def on_refresh_presets(self):
         self.update_preset_widget()

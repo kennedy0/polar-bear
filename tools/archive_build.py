@@ -1,6 +1,8 @@
 import os
 import re
+import platform
 import sys
+import tarfile
 import zipfile
 
 
@@ -13,6 +15,15 @@ def create_archive(folder_path: str) -> int:
         return 1
 
     version = get_version()
+    if platform.system() == "Windows":
+        return create_archive_windows(folder_path, version)
+    elif platform.system() == "Linux":
+        return create_archive_linux(folder_path, version)
+    else:
+        raise NotImplementedError(f"OS not supported: {platform.system()}")
+
+
+def create_archive_windows(folder_path: str, version: str) -> int:
     zip_file = f"{folder_path}_{version}_win.zip"
 
     if os.path.isfile(zip_file):
@@ -25,6 +36,22 @@ def create_archive(folder_path: str) -> int:
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, folder_path)
                 zf.write(full_path, arcname=rel_path)
+    return 0
+
+
+def create_archive_linux(folder_path: str, version: str) -> int:
+    tar_file = f"{folder_path}_{version}_linux.tar.gz"
+
+    if os.path.isfile(tar_file):
+        print(f"{tar_file} already exists.")
+        return 1
+
+    with tarfile.open(tar_file, 'w:gz') as tf:
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, folder_path)
+                tf.add(full_path, arcname=rel_path)
     return 0
 
 

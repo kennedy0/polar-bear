@@ -2,3 +2,5 @@
 *.py[ci]
 /dist/
 /build-venv/
+/build/
+/PolarBear.spec
